@@ -143,8 +143,10 @@ as.data.table.list = function(x,
       # else avoid dispatching to as.data.table.data.table (which exists and copies)
     } else if (is.table(xi)) {
       xi = x[[i]] = as.data.table.table(xi, keep.rownames=keep.rownames)
-    } else if (is.function(xi)) {
-      xi = x[[i]] = list(xi)
+    } else if (is.expression(xi)) {
+      xi = x[[i]] = sapply(xi, function(x) list(as.expression(x)))
+    } else if (!is.atomic(xi)) {
+      xi = x[[i]] = c(xi)
     }
     eachnrow[i] = NROW(xi)    # for a vector (including list() columns) returns the length
     eachncol[i] = NCOL(xi)    # for a vector returns 1
